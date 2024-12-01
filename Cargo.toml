@@ -1,0 +1,11 @@
+[package]
+name = "goni-shadow"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.41.1", features = ["macros", "rt-multi-thread"] }
+futures-util = { version = "0.3.31" }
+dotenv = { version = "0.15.0" }
+thiserror = { version = "2.0.3" }
+grammers-client = { git = "https://github.com/goni098/grammers", branch = "master" }
