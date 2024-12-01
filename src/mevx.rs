@@ -13,8 +13,8 @@ use grammers_client::{
 use std::time::Duration;
 
 pub trait ChatingWithMevx {
-    async fn press_a_btn_callback(&self, msg_id: i32, btn: &KeyboardButtonCallback) -> Rs<()>;
-    async fn paste_token(&self, token: &str) -> Rs<(MexvBuySellPopUp, Message)>;
+    async fn press_a_callback_btn(&self, msg_id: i32, btn: &KeyboardButtonCallback) -> Rs<()>;
+    async fn paste_token_address(&self, token: &str) -> Rs<(MexvBuySellPopUp, Message)>;
     async fn type_amount(
         &self,
         msg_id: i32,
@@ -24,12 +24,12 @@ pub trait ChatingWithMevx {
 }
 
 impl ChatingWithMevx for Client {
-    async fn paste_token(&self, token: &str) -> Rs<(MexvBuySellPopUp, Message)> {
+    async fn paste_token_address(&self, token: &str) -> Rs<(MexvBuySellPopUp, Message)> {
         let token_msg = self.send_message(MEVX, token).await?;
 
         loop {
             if let Some(msg) = self.iter_messages(MEVX).limit(1).next().await? {
-                if let Some(popup) = msg.get_mevx_buy_sell_popup() {
+                if let Some(popup) = msg.get_buy_sell_popup() {
                     self.delete_messages(MEVX, &[token_msg.id()]).await?;
                     return Ok((popup, msg));
                 } else {
@@ -39,7 +39,7 @@ impl ChatingWithMevx for Client {
         }
     }
 
-    async fn press_a_btn_callback(&self, msg_id: i32, btn: &KeyboardButtonCallback) -> Rs<()> {
+    async fn press_a_callback_btn(&self, msg_id: i32, btn: &KeyboardButtonCallback) -> Rs<()> {
         self.invoke(&GetBotCallbackAnswer {
             data: Some(btn.data.clone()),
             game: false,
