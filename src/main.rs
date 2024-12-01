@@ -6,11 +6,23 @@ mod msg;
 use error::Rs;
 use goni::Goni;
 use grammers_client::{
-    session::Session,
-    types::{Chat, Message, Update},
+    session::{PackedType, Session},
+    types::{Message, PackedChat, Update},
     Client, Config, InitParams,
 };
 use msg::{Auto007Message, Order, OrderParams};
+
+pub const MEVX: PackedChat = PackedChat {
+    id: 7294318663,
+    ty: PackedType::Bot,
+    access_hash: Some(-7644159981601515537),
+};
+
+pub const AUTO007: PackedChat = PackedChat {
+    id: 7294318663,
+    ty: PackedType::Bot,
+    access_hash: Some(-7644159981601515537),
+};
 
 #[tokio::main]
 async fn main() -> Rs<()> {
@@ -45,17 +57,9 @@ async fn main() -> Rs<()> {
         goni.session().save_to_file("session")?;
     }
 
-    let Some(mevx) = goni.resolve_username("MevxTradingBot").await? else {
-        return Ok(());
-    };
-
-    let Some(auto007) = goni.resolve_username("Auto007").await? else {
-        return Ok(());
-    };
-
     while let Ok(update) = goni.next_update().await {
         if let Update::NewMessage(message) = update {
-            process_incoming_message(&goni, &message, &mevx, &auto007)
+            process_incoming_message(&goni, &message)
                 .await
                 .unwrap_or_else(|error| eprintln!("{:#?}", error));
         }
@@ -64,13 +68,8 @@ async fn main() -> Rs<()> {
     Ok(())
 }
 
-async fn process_incoming_message(
-    goni: &Client,
-    message: &Message,
-    mevx: &Chat,
-    auto007: &Chat,
-) -> Rs<()> {
-    if !message.is_auto007_message(auto007) {
+async fn process_incoming_message(goni: &Client, message: &Message) -> Rs<()> {
+    if !message.is_auto007_message() {
         return Ok(());
     }
 
@@ -81,7 +80,7 @@ async fn process_incoming_message(
     } = message.get_order_params();
 
     match order {
-        Order::Buy => goni.make_a_buy_order(mevx, token, amount).await,
-        Order::Sell => goni.make_a_sell_order(mevx, token, amount).await,
+        Order::Buy => goni.make_a_buy_order(token, amount).await,
+        Order::Sell => goni.make_a_sell_order(token, amount).await,
     }
 }

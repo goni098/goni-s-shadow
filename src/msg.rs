@@ -1,10 +1,13 @@
-use crate::error::{Error, Rs};
+use crate::{
+    error::{Error, Rs},
+    AUTO007,
+};
 use grammers_client::{
     grammers_tl_types::{
         enums::{KeyboardButton, KeyboardButtonRow, ReplyMarkup},
         types::KeyboardButtonCallback,
     },
-    types::{Chat, Message},
+    types::Message,
 };
 
 pub trait MevxMessage {
@@ -76,14 +79,14 @@ impl MevxMessage for Message {
 }
 
 pub trait Auto007Message {
-    fn is_auto007_message(&self, auto007: &Chat) -> bool;
+    fn is_auto007_message(&self) -> bool;
     fn get_order_params(&self) -> OrderParams;
 }
 
 impl Auto007Message for Message {
-    fn is_auto007_message(&self, auto007: &Chat) -> bool {
+    fn is_auto007_message(&self) -> bool {
         self.sender()
-            .is_some_and(|sender| sender.id() == auto007.id())
+            .is_some_and(|sender| sender.id() == AUTO007.id)
     }
 
     fn get_order_params(&self) -> OrderParams {
