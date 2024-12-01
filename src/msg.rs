@@ -8,12 +8,12 @@ use grammers_client::{
 };
 
 pub trait MevxMessage {
-    fn get_mevx_buy_sell_popup(&self) -> Option<MexvBuySellPopUp>;
+    fn get_buy_sell_popup(&self) -> Option<MexvBuySellPopUp>;
     async fn get_typing_amount_btn(&self, option: Order) -> Rs<KeyboardButtonCallback>;
 }
 
 impl MevxMessage for Message {
-    fn get_mevx_buy_sell_popup(&self) -> Option<MexvBuySellPopUp> {
+    fn get_buy_sell_popup(&self) -> Option<MexvBuySellPopUp> {
         self.reply_markup()
             .and_then(|reply_markup| match reply_markup {
                 ReplyMarkup::ReplyInlineMarkup(inline_markup) => Some(inline_markup.rows),

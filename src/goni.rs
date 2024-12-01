@@ -12,12 +12,12 @@ pub trait Goni {
 
 impl Goni for Client {
     async fn make_a_buy_order(&self, mevx: &Chat, token: String, amount: f64) -> Rs<()> {
-        let (popup, msg) = self.paste_token(mevx, &token).await?;
+        let (popup, msg) = self.paste_token_address(mevx, &token).await?;
 
         let msg_id = msg.id();
 
-        self.press_a_btn_callback(msg_id, &popup.buy).await?;
-        self.press_a_btn_callback(msg_id, &popup.swap).await?;
+        self.press_a_callback_btn(msg_id, &popup.buy).await?;
+        self.press_a_callback_btn(msg_id, &popup.swap).await?;
 
         let buy_x_btn = msg.get_typing_amount_btn(Order::Buy).await?;
 
@@ -28,12 +28,12 @@ impl Goni for Client {
     }
 
     async fn make_a_sell_order(&self, mevx: &Chat, token: String, amount: f64) -> Rs<()> {
-        let (popup, msg) = self.paste_token(mevx, &token).await?;
+        let (popup, msg) = self.paste_token_address(mevx, &token).await?;
 
         let msg_id = msg.id();
 
-        self.press_a_btn_callback(msg_id, &popup.sell).await?;
-        self.press_a_btn_callback(msg_id, &popup.swap).await?;
+        self.press_a_callback_btn(msg_id, &popup.sell).await?;
+        self.press_a_callback_btn(msg_id, &popup.swap).await?;
 
         let sell_x_btn = msg.get_typing_amount_btn(Order::Sell).await?;
 
