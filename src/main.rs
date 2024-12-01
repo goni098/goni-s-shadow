@@ -6,7 +6,9 @@ mod msg;
 use error::Rs;
 use goni::Goni;
 use grammers_client::{
-    session::Session, types::Chat, types::Message, types::Update, Client, Config, InitParams,
+    session::Session,
+    types::{Chat, Message, Update},
+    Client, Config, InitParams,
 };
 use msg::{Auto007Message, Order, OrderParams};
 
@@ -51,10 +53,12 @@ async fn main() -> Rs<()> {
         return Ok(());
     };
 
-    while let Ok(Update::NewMessage(message)) = goni.next_update().await {
-        process_incoming_message(&goni, &message, &mevx, &auto007)
-            .await
-            .unwrap_or_else(|error| eprintln!("{:#?}", error));
+    while let Ok(update) = goni.next_update().await {
+        if let Update::NewMessage(message) = update {
+            process_incoming_message(&goni, &message, &mevx, &auto007)
+                .await
+                .unwrap_or_else(|error| eprintln!("{:#?}", error));
+        }
     }
 
     Ok(())
